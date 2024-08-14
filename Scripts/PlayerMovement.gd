@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 
-@export var SPEED: float = 75.0
+@export var speed: float = 75.0
 @export var friction: float = 5.0 
 var screen_size
 
@@ -30,7 +30,7 @@ func _physics_process(delta):
 	if Input.is_action_pressed("up"):
 		direction.y -= 1
 	
-	velocity = direction * SPEED
+	velocity = direction * speed
 	
 	if velocity.length() > 0:
 		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)

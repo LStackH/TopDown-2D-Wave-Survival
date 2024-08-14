@@ -449,4 +449,3 @@ shape = SubResource("RectangleShape2D_fmbla")
 
 [node name="NPC" parent="." instance=ExtResource("3_633pl")]
 position = Vector2(141, -1)
-SPEED = 300.0

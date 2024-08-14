@@ -24,9 +24,6 @@ func _physics_process(delta):
 	# Get the weapons ideal position, by adding the vector from the players center, times the length variable
 	var target_position = NPC_position + direction_to_player * max_length
 	
-	# Get the direction for the weapons current position to the ideal target position
-	#var current_direction = (target_position - global_position)
-	
 	var displacement = target_position - global_position
 	
 	# Apply spring force to pull the weapon towards the target position
