@@ -1,0 +1,54 @@
+[gd_scene load_steps=7 format=3 uid="uid://c4070afgd24lj"]
+
+[ext_resource type="Script" path="res://Scripts/PlayerMovement.gd" id="1_xb4mx"]
+[ext_resource type="Texture2D" uid="uid://dn5dvtab6jmth" path="res://Assets/KenneyAssets/Kenney_Tiny_Dungeon_Pack/Tiles/tile_0088.png" id="2_4yl4f"]
+[ext_resource type="Texture2D" uid="uid://d276jc5u4ipog" path="res://Assets/KenneyAssets/Kenney_Tiny_Dungeon_Pack/Tiles/tile_0104.png" id="3_8p6th"]
+[ext_resource type="Script" path="res://Scripts/WeaponPositionScript.gd" id="3_76ol1"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3g0lp"]
+radius = 7.0
+height = 18.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mxiex"]
+radius = 2.0
+height = 8.0
+
+[node name="Player" type="CharacterBody2D"]
+position = Vector2(0, -1)
+script = ExtResource("1_xb4mx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_3g0lp")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_4yl4f")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(3, 3)
+process_callback = 0
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
+
+[node name="RigidBody2D" type="RigidBody2D" parent="."]
+position = Vector2(9, 0)
+collision_layer = 6
+collision_mask = 6
+mass = 0.01
+gravity_scale = 0.0
+linear_damp = 1.0
+angular_damp = 1.0
+script = ExtResource("3_76ol1")
+max_length = 20.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
+position = Vector2(4, 1)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_mxiex")
+
+[node name="Sprite2D" type="Sprite2D" parent="RigidBody2D"]
+texture_filter = 1
+position = Vector2(4, 1)
+rotation = 1.5708
+scale = Vector2(0.55, 0.55)
+texture = ExtResource("3_8p6th")

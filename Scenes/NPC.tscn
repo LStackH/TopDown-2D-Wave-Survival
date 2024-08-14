@@ -1,0 +1,49 @@
+[gd_scene load_steps=7 format=3 uid="uid://bfbjch3xsi2mr"]
+
+[ext_resource type="Script" path="res://Scripts/NPC_Movement_Script.gd" id="1_mcb3y"]
+[ext_resource type="Texture2D" uid="uid://dfclgptifdxd6" path="res://Assets/KenneyAssets/Kenney_Tiny_Dungeon_Pack/Tiles/tile_0098.png" id="2_i2obt"]
+[ext_resource type="Script" path="res://Scripts/NPC_Weapon_Position_Script.gd" id="3_xqs06"]
+[ext_resource type="Texture2D" uid="uid://bi32f3o0j4j7l" path="res://Assets/KenneyAssets/Kenney_Tiny_Dungeon_Pack/Tiles/tile_0106.png" id="4_cvoli"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3g0lp"]
+radius = 7.0
+height = 18.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mxiex"]
+radius = 2.0
+height = 8.0
+
+[node name="NPC" type="CharacterBody2D"]
+position = Vector2(0, -1)
+collision_layer = 4
+collision_mask = 4
+script = ExtResource("1_mcb3y")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_3g0lp")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_i2obt")
+
+[node name="RigidBody2D" type="RigidBody2D" parent="."]
+position = Vector2(9, 0)
+collision_layer = 3
+collision_mask = 3
+mass = 0.01
+gravity_scale = 0.0
+linear_damp = 1.0
+angular_damp = 1.0
+script = ExtResource("3_xqs06")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
+position = Vector2(4, 1)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_mxiex")
+
+[node name="Sprite2D" type="Sprite2D" parent="RigidBody2D"]
+texture_filter = 1
+position = Vector2(4, 1)
+rotation = 1.5708
+scale = Vector2(0.55, 0.55)
+texture = ExtResource("4_cvoli")
