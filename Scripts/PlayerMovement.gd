@@ -1,8 +1,13 @@
 extends CharacterBody2D
 
 
-@export var speed: float = 75.0
+@export var speed: float = 50.0
 @export var friction: float = 5.0 
+@export var max_health: int = 10
+@export var min_health: int = 0
+
+@onready var current_health: int = max_health
+
 var screen_size
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -38,3 +43,12 @@ func _physics_process(delta):
 	position += velocity * delta
 	
 	move_and_slide()
+
+func take_damage(damage):
+	current_health -= damage
+	if current_health <= 0:
+		die()
+	print("Player health: ", current_health)
+
+func die():
+	print("Player has died")

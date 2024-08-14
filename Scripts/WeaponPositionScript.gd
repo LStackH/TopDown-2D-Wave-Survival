@@ -1,20 +1,51 @@
 extends RigidBody2D
 
 @export var max_length: float = 10.0
-@export var spring_strenght: float = 15.0
+@export var max_spring_strength: float = 15.0
 @export var damping: float = 0.8
+@export var attack_damage: int = 1
+@export var attack_speed: float = 25.0
+@export var jab_max_length: float = 30.0  # Extended reach during jab
+@export var jab_max_spring_strength: float = 0.5
+@export var jab_duration: float = 0.2  # Duration of the jab
+@export var max_hits_per_swing: int = 2  # Max enemies hit per swing
+@export var hit_cooldown: float = 0.1  # Cooldown time between hits
 
 @onready var weapon_sprite: Sprite2D = $Sprite2D
 @onready var player: CharacterBody2D = $".."
 
+var original_max_length: float
+var original_spring_strength: float
+var jab_timer: float = 0.0
+var do_rotate: bool = true
+var swing_hits: int = 0
+var last_hit_time: float = 0.0
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
+	# Store the original max length and spring strength
+	original_max_length = max_length
+	original_spring_strength = max_spring_strength
+	
 	# Confine the mouse inside the window and center it at game start.
 	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
 	var viewport_size = get_viewport().size
 	var center_position = viewport_size / 2
 	Input.warp_mouse(center_position)
+
+func _on_body_entered(body):
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if body.is_in_group("Enemy") and (current_time - last_hit_time) >= hit_cooldown:
+		# Jab can hit only one enemy
+		if jab_timer > 0.0:
+			disable_weapon_collision() # Disable collision after a successful jab hit
+			deal_damage(body)
+			max_length = original_max_length
+			max_spring_strength = original_spring_strength
+		# Swing can hit up to max_hits_per_swing enemies
+		elif swing_hits < max_hits_per_swing:
+			deal_damage(body)
+			swing_hits += 1
+			last_hit_time = current_time  # Reset the hit cooldown timer
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
@@ -24,17 +55,51 @@ func _physics_process(delta):
 	# Get the normalized vector pointing towards the mouse, from the player
 	var direction_to_mouse = (mouse_position - player_position).normalized()
 	
-	# Get the weapons ideal position, by adding the vector from the players center, times the length variable
+	# Handle jab input
+	if Input.is_action_just_pressed("primary_action") and jab_timer <= 0.0:
+		max_length = jab_max_length
+		max_spring_strength = jab_max_spring_strength
+		apply_central_impulse(direction_to_mouse * attack_speed)
+		jab_timer = jab_duration
+	
+	# Manage jab timer and rotation
+	if jab_timer > 0.0:
+		jab_timer -= delta
+		do_rotate = false
+		if jab_timer <= 0.0:
+			do_rotate = true
+			max_length = original_max_length
+			max_spring_strength = original_spring_strength
+			enable_weapon_collision()  # Re-enable collision after the jab ends
+			swing_hits = 0  # Reset swing hit count after the jab
+	
+	position_weapon(player_position, direction_to_mouse, mouse_position, do_rotate)
+
+func position_weapon(player_position, direction_to_mouse, mouse_position, do_rotate):
+	# Get the weapon's ideal position, by adding the vector from the player's center, times the length variable
 	var target_position = player_position + direction_to_mouse * max_length
-	
-	# Get the direction for the weapons current position to the ideal target position
-	#var current_direction = (target_position - global_position)
-	
 	var displacement = target_position - global_position
 	
 	# Apply spring force to pull the weapon towards the target position
-	var spring_force = displacement * spring_strenght - linear_velocity * damping
+	var spring_force = displacement * max_spring_strength - linear_velocity * damping
 	apply_central_force(spring_force)
-	
-	rotation = (mouse_position - global_position).angle()
+	if do_rotate:
+		rotation = (mouse_position - global_position).angle()
 
+func deal_damage(body):
+	if body.has_method("take_damage"):
+		body.take_damage(attack_damage)
+	else:
+		print("The body is not attackable")
+
+func disable_weapon_collision():
+	# Disable the weapon's collision by turning off its collision layer and mask
+	set_collision_layer_value(2, false)
+	set_collision_mask_value(2, false)
+	set_collision_mask_value(3, false)
+
+func enable_weapon_collision():
+	# Re-enable the weapon's collision by turning on its collision layer and mask
+	set_collision_layer_value(2, true)
+	set_collision_mask_value(2, true)
+	set_collision_mask_value(3, true)

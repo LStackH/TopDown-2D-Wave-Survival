@@ -28,13 +28,10 @@ texture = ExtResource("2_i2obt")
 
 [node name="Weapon" type="RigidBody2D" parent="."]
 position = Vector2(9, 0)
-collision_layer = 2
+collision_layer = 3
 collision_mask = 3
 mass = 0.01
 gravity_scale = 0.0
-continuous_cd = 2
-max_contacts_reported = 1
-contact_monitor = true
 script = ExtResource("3_xqs06")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Weapon"]
@@ -48,5 +45,3 @@ position = Vector2(4, 1)
 rotation = 1.5708
 scale = Vector2(0.55, 0.55)
 texture = ExtResource("4_cvoli")
-
-[connection signal="body_entered" from="Weapon" to="Weapon" method="_on_body_entered"]

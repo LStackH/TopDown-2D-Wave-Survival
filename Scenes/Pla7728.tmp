@@ -32,11 +32,10 @@ position_smoothing_speed = 10.0
 
 [node name="Weapon" type="RigidBody2D" parent="."]
 position = Vector2(9, 0)
-collision_layer = 2
+collision_layer = 6
 collision_mask = 6
 mass = 0.01
 gravity_scale = 0.0
-continuous_cd = 2
 max_contacts_reported = 1
 contact_monitor = true
 script = ExtResource("3_76ol1")
