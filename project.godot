@@ -57,6 +57,14 @@ primary_action={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="Player_Character"
+2d_physics/layer_2="All_Weapons"
+2d_physics/layer_3="NPC_Character"
+2d_physics/layer_4="Buildings"
+
 [physics]
 
+2d/run_on_separate_thread=true
 2d/physics_engine="GodotPhysics2D"

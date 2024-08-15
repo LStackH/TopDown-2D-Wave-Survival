@@ -6,9 +6,12 @@ extends RigidBody2D
 @export var reaction_speed: float = 0.1
 @export var attack_damage: int = 1
 
+
 @onready var weapon_sprite: Sprite2D = $Sprite2D
 @onready var NPC: CharacterBody2D = $".."
 @onready var player: CharacterBody2D
+
+
 
 
 # Called when the node enters the scene tree for the first time.
@@ -17,6 +20,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
+	player = get_tree().get_nodes_in_group("PlayerGroup")[0]
 	var player_position = player.global_position
 	var NPC_position = NPC.global_position
 	
@@ -43,7 +47,7 @@ func _on_body_entered(body):
 		deal_damage(body)
 
 func deal_damage(body):
-	if body.has_method("take_damage"):
+	if body.has_method("take_damage") and body.is_in_group("PlayerGroup"):
 		body.take_damage(attack_damage)
 	else:
 		print("The body is not attackable")

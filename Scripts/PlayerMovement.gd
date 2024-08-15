@@ -1,5 +1,6 @@
 extends CharacterBody2D
 
+signal healthChanged
 
 @export var speed: float = 50.0
 @export var friction: float = 5.0 
@@ -7,14 +8,16 @@ extends CharacterBody2D
 @export var min_health: int = 0
 
 @onready var current_health: int = max_health
+@onready var sprite_2d = $Sprite2D
+
 
 var screen_size
 
-# Get the gravity from the project settings to be synced with RigidBody nodes.
-var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+
 
 func _ready():
 	add_to_group("PlayerGroup")
+	emit_signal("healthChanged")
 
 func _process(delta):
 	if Input.is_action_just_pressed("quit"):
@@ -40,12 +43,18 @@ func _physics_process(delta):
 	if velocity.length() > 0:
 		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
 	
+	if velocity.x > 0:
+		sprite_2d.flip_h = false
+	else:
+		sprite_2d.flip_h = true
+	
 	position += velocity * delta
 	
 	move_and_slide()
 
 func take_damage(damage):
 	current_health -= damage
+	emit_signal("healthChanged")
 	if current_health <= 0:
 		die()
 	print("Player health: ", current_health)

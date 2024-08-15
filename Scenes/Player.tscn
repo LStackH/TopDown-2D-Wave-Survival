@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://c4070afgd24lj"]
+[gd_scene load_steps=10 format=3 uid="uid://c4070afgd24lj"]
 
 [ext_resource type="Script" path="res://Scripts/PlayerMovement.gd" id="1_xb4mx"]
 [ext_resource type="Texture2D" uid="uid://dn5dvtab6jmth" path="res://Assets/KenneyAssets/Kenney_Tiny_Dungeon_Pack/Tiles/tile_0088.png" id="2_4yl4f"]
 [ext_resource type="Texture2D" uid="uid://d276jc5u4ipog" path="res://Assets/KenneyAssets/Kenney_Tiny_Dungeon_Pack/Tiles/tile_0104.png" id="3_8p6th"]
 [ext_resource type="Script" path="res://Scripts/WeaponPositionScript.gd" id="3_76ol1"]
+[ext_resource type="Script" path="res://Scripts/Health_Bar_Script.gd" id="5_5r143"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3g0lp"]
 radius = 6.0
@@ -13,7 +14,13 @@ height = 16.0
 radius = 2.0
 height = 7.99999
 
-[node name="Player" type="CharacterBody2D"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d8fg8"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ufibm"]
+bg_color = Color(0.781452, 0.00458737, 0.164513, 1)
+
+[node name="Player" type="CharacterBody2D" groups=["PlayerGroup"]]
 position = Vector2(0, -1)
 script = ExtResource("1_xb4mx")
 
@@ -32,7 +39,7 @@ position_smoothing_speed = 10.0
 
 [node name="Weapon" type="RigidBody2D" parent="."]
 position = Vector2(9, 0)
-collision_layer = 2
+collision_layer = 6
 collision_mask = 6
 mass = 0.01
 gravity_scale = 0.0
@@ -40,7 +47,7 @@ continuous_cd = 2
 max_contacts_reported = 1
 contact_monitor = true
 script = ExtResource("3_76ol1")
-max_length = 20.0
+max_length = 30.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Weapon"]
 position = Vector2(4, 1)
@@ -53,5 +60,23 @@ position = Vector2(4, 1)
 rotation = 1.5708
 scale = Vector2(0.55, 0.55)
 texture = ExtResource("3_8p6th")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ProgressBar" type="ProgressBar" parent="CanvasLayer" node_paths=PackedStringArray("host")]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 11.0
+offset_top = -42.0
+offset_right = 204.0
+offset_bottom = -12.0
+grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxFlat_d8fg8")
+theme_override_styles/fill = SubResource("StyleBoxFlat_ufibm")
+value = 60.0
+show_percentage = false
+script = ExtResource("5_5r143")
+host = NodePath("../..")
 
 [connection signal="body_entered" from="Weapon" to="Weapon" method="_on_body_entered"]

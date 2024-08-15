@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://dvoelny3lfm7x"]
+
+[ext_resource type="Script" path="res://Scripts/Health_Bar_Script.gd" id="1_pk057"]
+
+[node name="HealthBar" type="CanvasLayer"]
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_right = 144.0
+offset_bottom = 39.0
+grow_vertical = 0
+rotation = -1.5708
+script = ExtResource("1_pk057")

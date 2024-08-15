@@ -1,0 +1,78 @@
+[gd_scene load_steps=7 format=3 uid="uid://bfbjch3xsi2mr"]
+
+[ext_resource type="Script" path="res://Scripts/NPC_Movement_Script.gd" id="1_mcb3y"]
+[ext_resource type="Texture2D" uid="uid://dfclgptifdxd6" path="res://Assets/KenneyAssets/Kenney_Tiny_Dungeon_Pack/Tiles/tile_0098.png" id="2_i2obt"]
+[ext_resource type="Script" path="res://Scripts/NPC_Weapon_Position_Script.gd" id="3_xqs06"]
+[ext_resource type="Texture2D" uid="uid://bi32f3o0j4j7l" path="res://Assets/KenneyAssets/Kenney_Tiny_Dungeon_Pack/Tiles/tile_0106.png" id="4_cvoli"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3g0lp"]
+radius = 7.0
+height = 18.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mxiex"]
+radius = 2.0
+height = 8.0
+
+[node name="NPC" type="CharacterBody2D"]
+position = Vector2(0, -1)
+collision_layer = 4
+collision_mask = 4
+motion_mode = 1
+wall_min_slide_angle = 0.0
+script = ExtResource("1_mcb3y")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_3g0lp")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_i2obt")
+
+[node name="RayCast2D_Center" type="RayCast2D" parent="."]
+enabled = false
+target_position = Vector2(25, 0)
+collision_mask = 8
+
+[node name="RayCast2D_Left" type="RayCast2D" parent="."]
+enabled = false
+target_position = Vector2(25, -11)
+collision_mask = 8
+
+[node name="RayCast2D_Right" type="RayCast2D" parent="."]
+enabled = false
+target_position = Vector2(25, 11)
+collision_mask = 8
+
+[node name="Weapon" type="RigidBody2D" parent="."]
+position = Vector2(9, 0)
+collision_layer = 2
+collision_mask = 3
+mass = 0.01
+gravity_scale = 0.0
+continuous_cd = 2
+max_contacts_reported = 1
+contact_monitor = true
+script = ExtResource("3_xqs06")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Weapon"]
+position = Vector2(4, 1)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_mxiex")
+
+[node name="Sprite2D" type="Sprite2D" parent="Weapon"]
+texture_filter = 1
+position = Vector2(4, 1)
+rotation = 1.5708
+scale = Vector2(0.55, 0.55)
+texture = ExtResource("4_cvoli")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_desired_distance = 5.0
+target_desired_distance = 5.0
+path_postprocessing = 1
+avoidance_enabled = true
+avoidance_layers = 7
+avoidance_mask = 7
+
+[connection signal="body_entered" from="Weapon" to="Weapon" method="_on_body_entered"]
+[connection signal="velocity_computed" from="NavigationAgent2D" to="." method="_on_navigation_agent_2d_velocity_computed"]

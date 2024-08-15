@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://4pcgmtfnmg3k"]
+
+[ext_resource type="Script" path="res://Scripts/npc_spawner.gd" id="1_pxdeb"]
+
+[node name="NPCSpawner" type="Node2D"]
+script = ExtResource("1_pxdeb")
+spawn_points = Array[NodePath]([NodePath("SpawnPoint1"), NodePath("SpawnPoint2"), NodePath("SpawnPoint3"), NodePath("SpawnPoint4")])
+
+[node name="SpawnPoint1" type="Marker2D" parent="."]
+
+[node name="SpawnPoint2" type="Marker2D" parent="."]
+
+[node name="SpawnPoint3" type="Marker2D" parent="."]
+
+[node name="SpawnPoint4" type="Marker2D" parent="."]

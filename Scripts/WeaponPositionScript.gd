@@ -4,12 +4,12 @@ extends RigidBody2D
 @export var max_spring_strength: float = 15.0
 @export var damping: float = 0.8
 @export var attack_damage: int = 1
-@export var attack_speed: float = 25.0
+@export var attack_speed: float = 15.0
 @export var jab_max_length: float = 30.0  # Extended reach during jab
 @export var jab_max_spring_strength: float = 0.5
 @export var jab_duration: float = 0.2  # Duration of the jab
-@export var max_hits_per_swing: int = 2  # Max enemies hit per swing
 @export var hit_cooldown: float = 0.1  # Cooldown time between hits
+@export var knockback_multiplier: float = 3.0
 
 @onready var weapon_sprite: Sprite2D = $Sprite2D
 @onready var player: CharacterBody2D = $".."
@@ -18,7 +18,6 @@ var original_max_length: float
 var original_spring_strength: float
 var jab_timer: float = 0.0
 var do_rotate: bool = true
-var swing_hits: int = 0
 var last_hit_time: float = 0.0
 
 func _ready():
@@ -41,13 +40,10 @@ func _on_body_entered(body):
 			deal_damage(body)
 			max_length = original_max_length
 			max_spring_strength = original_spring_strength
-		# Swing can hit up to max_hits_per_swing enemies
-		elif swing_hits < max_hits_per_swing:
+		else:
 			deal_damage(body)
-			swing_hits += 1
-			last_hit_time = current_time  # Reset the hit cooldown timer
+		last_hit_time = current_time  # Reset the hit cooldown timer
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	var mouse_position = get_global_mouse_position()
 	var player_position = player.global_position
@@ -71,12 +67,10 @@ func _physics_process(delta):
 			max_length = original_max_length
 			max_spring_strength = original_spring_strength
 			enable_weapon_collision()  # Re-enable collision after the jab ends
-			swing_hits = 0  # Reset swing hit count after the jab
 	
 	position_weapon(player_position, direction_to_mouse, mouse_position, do_rotate)
 
 func position_weapon(player_position, direction_to_mouse, mouse_position, do_rotate):
-	# Get the weapon's ideal position, by adding the vector from the player's center, times the length variable
 	var target_position = player_position + direction_to_mouse * max_length
 	var displacement = target_position - global_position
 	
@@ -88,18 +82,19 @@ func position_weapon(player_position, direction_to_mouse, mouse_position, do_rot
 
 func deal_damage(body):
 	if body.has_method("take_damage"):
-		body.take_damage(attack_damage)
+		# Calculate knockback direction and force
+		var knockback_direction = (body.global_position - player.global_position).normalized()
+		var knockback_force = knockback_direction * attack_speed * knockback_multiplier
+		body.take_damage(attack_damage, knockback_force)
 	else:
 		print("The body is not attackable")
 
 func disable_weapon_collision():
-	# Disable the weapon's collision by turning off its collision layer and mask
 	set_collision_layer_value(2, false)
 	set_collision_mask_value(2, false)
 	set_collision_mask_value(3, false)
 
 func enable_weapon_collision():
-	# Re-enable the weapon's collision by turning on its collision layer and mask
 	set_collision_layer_value(2, true)
 	set_collision_mask_value(2, true)
 	set_collision_mask_value(3, true)
