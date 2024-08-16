@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bfbjch3xsi2mr"]
+[gd_scene load_steps=15 format=3 uid="uid://bfbjch3xsi2mr"]
 
 [ext_resource type="Script" path="res://Scripts/NPC_Movement_Script.gd" id="1_lxdqu"]
 [ext_resource type="Texture2D" uid="uid://dfclgptifdxd6" path="res://Assets/KenneyAssets/Kenney_Tiny_Dungeon_Pack/Tiles/tile_0098.png" id="2_ii5gc"]
@@ -19,6 +19,38 @@ bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1uquu"]
 bg_color = Color(0.781452, 0.00458737, 0.164513, 1)
+
+[sub_resource type="Gradient" id="Gradient_yyt1i"]
+offsets = PackedFloat32Array(0, 0.0808081, 0.424242)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_u0rq1"]
+gradient = SubResource("Gradient_yyt1i")
+
+[sub_resource type="Curve" id="Curve_js6k4"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1e-05, 0), 0.0, 0.0, 0, 0, Vector2(0.362832, 0.626374), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_n3a5l"]
+curve = SubResource("Curve_js6k4")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_uf3cy"]
+lifetime_randomness = 0.2
+particle_flag_align_y = true
+particle_flag_rotate_y = true
+emission_shape = 2
+emission_sphere_radius = 1.0
+inherit_velocity_ratio = 0.25
+initial_velocity_max = 1.0
+gravity = Vector3(0, 9.8, 0)
+scale_curve = SubResource("CurveTexture_n3a5l")
+color = Color(0.821827, 0.280091, 0.187635, 1)
+color_ramp = SubResource("GradientTexture1D_u0rq1")
+hue_variation_max = 0.1
+collision_mode = 1
+collision_friction = 0.0
+collision_bounce = 0.5
+collision_use_scale = true
 
 [node name="NPC" type="CharacterBody2D"]
 position = Vector2(0, -1)
@@ -60,6 +92,7 @@ continuous_cd = 2
 max_contacts_reported = 1
 contact_monitor = true
 script = ExtResource("3_phrmm")
+max_length = 5.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Weapon"]
 position = Vector2(4, 1)
@@ -78,6 +111,8 @@ path_desired_distance = 5.0
 target_desired_distance = 5.0
 path_postprocessing = 1
 avoidance_enabled = true
+radius = 5.0
+max_neighbors = 8
 avoidance_layers = 7
 avoidance_mask = 7
 
@@ -92,6 +127,15 @@ value = 60.0
 show_percentage = false
 script = ExtResource("5_8vntk")
 host = NodePath("..")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+position = Vector2(0, 1)
+emitting = false
+amount = 50
+process_material = SubResource("ParticleProcessMaterial_uf3cy")
+one_shot = true
+preprocess = 0.1
+explosiveness = 0.6
 
 [connection signal="body_entered" from="Weapon" to="Weapon" method="_on_body_entered"]
 [connection signal="velocity_computed" from="NavigationAgent2D" to="." method="_on_navigation_agent_2d_velocity_computed"]

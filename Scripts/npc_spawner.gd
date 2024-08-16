@@ -3,7 +3,7 @@ extends Node2D
 
 @export var spawn_points: Array[NodePath] = []
 @export var npc_scene: PackedScene
-@export var max_enemies: int = 10
+@export var max_enemies: int = 1000
 var current_enemy_count: int = 0
 
 func _ready():

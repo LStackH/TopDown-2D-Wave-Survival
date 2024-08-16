@@ -18,6 +18,7 @@ signal enemyDied
 @onready var raycast_right: RayCast2D = $RayCast2D_Right
 @onready var navigation_agent: NavigationAgent2D = $NavigationAgent2D
 @onready var sprite_2d = $Sprite2D
+@onready var gpu_particles_2d = $GPUParticles2D
 
 var navigation_ready = false
 var knockback_velocity: Vector2 = Vector2.ZERO
@@ -70,6 +71,7 @@ func _physics_process(delta):
 	move_and_slide()
 
 func take_damage(damage, knockback: Vector2):
+	gpu_particles_2d.emitting = true
 	current_health -= damage
 	emit_signal("healthChanged")
 	if current_health <= 0:
@@ -78,10 +80,8 @@ func take_damage(damage, knockback: Vector2):
 	# Apply knockback
 	knockback_velocity = knockback
 	knockback_timer = knockback_duration
-	print("NPC health: ", current_health)
 
 func die():
-	print("NPC has died and will be removed")
 	emit_signal("enemyDied")
 	queue_free()
 

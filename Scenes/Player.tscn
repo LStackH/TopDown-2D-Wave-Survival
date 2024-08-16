@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://c4070afgd24lj"]
+[gd_scene load_steps=14 format=3 uid="uid://c4070afgd24lj"]
 
 [ext_resource type="Script" path="res://Scripts/PlayerMovement.gd" id="1_xb4mx"]
 [ext_resource type="Texture2D" uid="uid://dn5dvtab6jmth" path="res://Assets/KenneyAssets/Kenney_Tiny_Dungeon_Pack/Tiles/tile_0088.png" id="2_4yl4f"]
@@ -14,11 +14,40 @@ height = 16.0
 radius = 2.0
 height = 7.99999
 
+[sub_resource type="Gradient" id="Gradient_0b5kk"]
+offsets = PackedFloat32Array(0, 0.0808081, 0.424242)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_kb02g"]
+gradient = SubResource("Gradient_0b5kk")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qc6ne"]
+lifetime_randomness = 0.2
+particle_flag_align_y = true
+particle_flag_damping_as_friction = true
+emission_shape = 2
+emission_sphere_radius = 1.0
+inherit_velocity_ratio = 0.25
+initial_velocity_max = 1.0
+gravity = Vector3(0, 9.8, 0)
+damping_min = 0.2
+damping_max = 0.5
+color = Color(0.821827, 0.280091, 0.187635, 1)
+color_ramp = SubResource("GradientTexture1D_kb02g")
+hue_variation_max = 0.1
+collision_mode = 1
+collision_friction = 0.0
+collision_bounce = 0.5
+collision_use_scale = true
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d8fg8"]
 bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ufibm"]
 bg_color = Color(0.781452, 0.00458737, 0.164513, 1)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_5cdio"]
+polygon = PackedVector2Array(-7, -2, -7, 1, -9, 3, -8, 7, 7, 7, 9, 5, 8, 1, 6, -7, 3, -9, -3, -9, -6, -6)
 
 [node name="Player" type="CharacterBody2D" groups=["PlayerGroup"]]
 position = Vector2(0, -1)
@@ -37,6 +66,9 @@ process_callback = 0
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 
+[node name="Dash_Cooldown" type="Timer" parent="."]
+process_callback = 0
+
 [node name="Weapon" type="RigidBody2D" parent="."]
 position = Vector2(9, 0)
 collision_layer = 6
@@ -47,7 +79,6 @@ continuous_cd = 2
 max_contacts_reported = 1
 contact_monitor = true
 script = ExtResource("3_76ol1")
-max_length = 30.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Weapon"]
 position = Vector2(4, 1)
@@ -60,6 +91,14 @@ position = Vector2(4, 1)
 rotation = 1.5708
 scale = Vector2(0.55, 0.55)
 texture = ExtResource("3_8p6th")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Weapon"]
+position = Vector2(9, 1)
+emitting = false
+amount = 50
+process_material = SubResource("ParticleProcessMaterial_qc6ne")
+lifetime = 0.4
+one_shot = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -78,5 +117,17 @@ value = 60.0
 show_percentage = false
 script = ExtResource("5_5r143")
 host = NodePath("../..")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer"]
+texture_filter = 1
+offset_left = 10.0
+offset_top = 588.0
+offset_right = 202.0
+offset_bottom = 628.0
+text = "Health"
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+position = Vector2(0, 1)
+occluder = SubResource("OccluderPolygon2D_5cdio")
 
 [connection signal="body_entered" from="Weapon" to="Weapon" method="_on_body_entered"]
